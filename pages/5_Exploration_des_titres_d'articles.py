@@ -76,7 +76,7 @@ with tab1:
             key="0",
         )
         d_lower = st.date_input(
-            "Entrez date à laquel commencer le traitement", datetime.date(2023, 1, 1)
+            "Entrez date à laquel commencer le traitement", datetime.date(2023, 5, 1)
         )
         d_upper = st.date_input("Entrez date à laquel terminer le traitement", date_max)
 
@@ -158,8 +158,6 @@ with tab2:
             "retraites",
             "retraite",
             "49.3",
-            "Corée du Nord",
-            "Ukraine",
         ],
         suggestions=["politique"],
         maxtags=30,
@@ -167,7 +165,7 @@ with tab2:
     )
     d_lower_ = st.date_input(
         "Entrez date à laquelle commencer le traitement",
-        datetime.date(2023, 4, 1),
+        datetime.date(2023, 6, 1),
         key="3",
     )
     d_upper_ = st.date_input(
