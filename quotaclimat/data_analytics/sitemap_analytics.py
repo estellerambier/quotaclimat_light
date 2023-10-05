@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 from wordcloud import WordCloud
 
@@ -18,9 +17,7 @@ COLOR_ECO = WARMING_STRIPES_SEQUENCE[3]
 
 SECTION_CLIMAT = ["planete", "environnement", "crise-climatique"]
 
-nltk.download("stopwords")
 
-stopwords_fr = nltk.corpus.stopwords.words("french")
 
 
 def plot_media_count_comparison(
@@ -200,7 +197,7 @@ def filter_df_section_and_keyword(
 
 def make_word_cloud(df_origin: pd.DataFrame):
 
-    vectorizer = TfidfVectorizer(max_df=0.1, min_df=0.01, stop_words=stopwords_fr)
+    vectorizer = TfidfVectorizer(max_df=0.1, min_df=0.01)
     tfidf_positive_topic = vectorizer.fit_transform(df_origin.news_title)
     tfidf_positive_topic_sum = pd.DataFrame(
         tfidf_positive_topic.T.sum(axis=1),
