@@ -3,6 +3,8 @@ from io import StringIO
 import pandas as pd
 import streamlit as st
 from streamlit_tags import st_tags
+import plotly.io as pio
+from datetime import datetime
 
 import quotaclimat.data_analytics.bilan as mt_bilan
 import quotaclimat.data_analytics.exploration as mt_exploration
@@ -60,7 +62,7 @@ def load_data(uploaded_files):
 
 
 data = load_data(uploaded_files)
-
+all_figs = []
 
 if data is not None:
     data_filtered = mt_bilan.get_filtered_data(data)
@@ -84,20 +86,26 @@ if data is not None:
                     media_time, keyword=keyword
                 )
                 st.plotly_chart(fig_volume, use_container_width=True)
-
+                all_figs.append(fig_volume)
             st.markdown("## Classement")
             fig_clsmt_tv_c = mt_bilan.plot_classement_volume_mediatique_tv_continue(
                 data_filtered
             )
             st.plotly_chart(fig_clsmt_tv_c, use_container_width=True)
+            all_figs.append(fig_clsmt_tv_c)
+
             fig_clsmt_tv_g = mt_bilan.plot_classement_volume_mediatique_tv_generique(
                 data_filtered
             )
+
             st.plotly_chart(fig_clsmt_tv_g, use_container_width=True)
+            all_figs.append(fig_clsmt_tv_g)
+
             fig_clsmt_radio = mt_bilan.plot_classement_volume_mediatique_radio(
                 data_filtered
             )
             st.plotly_chart(fig_clsmt_radio, use_container_width=True)
+            all_figs.append(fig_clsmt_radio)
 
         with st.expander("Comparaison entre les sujets", expanded=False):
             st.markdown("## Classement")
@@ -110,6 +118,7 @@ if data is not None:
                 data_filtered_kw = data_filtered[data_filtered.keyword == keyword]
                 fig_time_volume = mt_bilan.media_volume_over_time(data_filtered_kw)
                 st.plotly_chart(fig_time_volume)
+                all_figs.append(fig_time_volume)
 
                 st.markdown("## Classement")
                 ranking = mt_bilan.get_ranking_evolution(data_filtered_kw)
@@ -121,6 +130,7 @@ if data is not None:
                     height=600,
                 )
                 st.plotly_chart(fig_ranking_tv_c)
+                all_figs.append(fig_ranking_tv_c)
 
                 st.markdown("### TV généraliste")
                 fig_ranking_tv_g = mt_bilan.show_ranking_chart(
@@ -129,6 +139,7 @@ if data is not None:
                     height=600,
                 )
                 st.plotly_chart(fig_ranking_tv_g)
+                all_figs.append(fig_ranking_tv_g)
 
                 st.markdown("### Radio")
                 fig_ranking_radio = mt_bilan.show_ranking_chart(
@@ -137,6 +148,7 @@ if data is not None:
                     height=800,
                 )
                 st.plotly_chart(fig_ranking_radio)
+                all_figs.append(fig_ranking_radio)
     with tab2:
         data_filtered_radio = data_filtered.loc[
             data_filtered.channel_name.isin(TOP_CHANNELS_RADIO)
@@ -166,20 +178,24 @@ if data is not None:
                     media_time_, keyword=keyword
                 )
                 st.plotly_chart(fig_volume, use_container_width=True)
+                all_figs.append(fig_volume)
 
             st.markdown("## Classement")
             fig_clsmt_tv_c = mt_bilan.plot_classement_volume_mediatique_tv_continue(
                 data_filtered_high_audience, hour_a_day=2
             )
             st.plotly_chart(fig_clsmt_tv_c, use_container_width=True)
+            all_figs.append(fig_clsmt_tv_c)
             fig_clsmt_tv_g = mt_bilan.plot_classement_volume_mediatique_tv_generique(
                 data_filtered_high_audience, hour_a_day=2
             )
             st.plotly_chart(fig_clsmt_tv_g, use_container_width=True)
+            all_figs.append(fig_clsmt_tv_g)
             fig_clsmt_radio = mt_bilan.plot_classement_volume_mediatique_radio(
                 data_filtered_high_audience, hour_a_day=4
             )
             st.plotly_chart(fig_clsmt_radio, use_container_width=True)
+            all_figs.append(fig_clsmt_radio)
 
         with st.expander("Evolutions au cours du temps", expanded=False):
             st.markdown("## Volumes médiatiques")
@@ -201,14 +217,38 @@ if data is not None:
                     title="Evolution du volume médiatique top TV %s" % keyword,
                 )
                 st.plotly_chart(fig_time_volume_tv)
+                all_figs.append(fig_time_volume_tv)
                 fig_time_volume_radio = mt_bilan.media_volume_over_time(
                     data_filtered_kw_radio,
                     hour_a_day=4,
                     title="Evolution du volume médiatique top Radio %s" % keyword,
                 )
                 st.plotly_chart(fig_time_volume_radio)
+                all_figs.append(fig_time_volume_radio)
+
+
+    # export the figures
+    timestamp = datetime.now().strftime("%Y%m%d_%H:%M")
+
+    html_filename = "report_%s.html"%timestamp
+    for fig in all_figs:
+        with open(html_filename, "w") as f:
+            f.write(fig.to_html())
+    with open(html_filename, 'r') as f:
+        html_string = f.read()
+        st.sidebar.download_button(
+            label="Télécharger report",
+            data=html_string,
+            key="download_button",
+            help="Clique pour télécharger le contenu de cette page.",
+            mine='application/octet-stream'
+        )
 
 
 else:
 
     st.info("Chargez un ou plusieurs fichiers Mediatree à droite pour lancer l'analyse")
+
+
+
+
