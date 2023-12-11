@@ -231,8 +231,8 @@ if data is not None:
     timestamp = datetime.now().strftime("%Y%m%d_%H:%M")
 
     html_filename = "report_%s.html"%timestamp
-    for fig in all_figs:
-        with open(html_filename, "w") as f:
+    with open(html_filename, "w") as f:
+        for fig in all_figs:
             f.write(fig.to_html())
     with open(html_filename, 'r') as f:
         html_string = f.read()
