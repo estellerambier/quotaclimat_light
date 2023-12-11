@@ -61,6 +61,13 @@ def load_data(uploaded_files):
         return None
 
 
+
+def add_tab2_filtering_to_fig_title(fig):
+    current_title = fig_volume.layout.title.text
+    updated_title = current_title + 'filtré de 6h à 10h radio et 19h à 21h TV'
+    fig.update_layout(title_text=updated_title)
+    return fig
+
 data = load_data(uploaded_files)
 all_figs = []
 
@@ -178,24 +185,25 @@ if data is not None:
                     media_time_, keyword=keyword
                 )
                 st.plotly_chart(fig_volume, use_container_width=True)
-                all_figs.append(fig_volume)
+                add_tab2_filtering_to_fig_title(fig_volume)
+                all_figs.append(add_tab2_filtering_to_fig_title(fig_volume))
 
             st.markdown("## Classement")
             fig_clsmt_tv_c = mt_bilan.plot_classement_volume_mediatique_tv_continue(
                 data_filtered_high_audience, hour_a_day=2
             )
             st.plotly_chart(fig_clsmt_tv_c, use_container_width=True)
-            all_figs.append(fig_clsmt_tv_c)
+            all_figs.append(add_tab2_filtering_to_fig_title(fig_clsmt_tv_c))
             fig_clsmt_tv_g = mt_bilan.plot_classement_volume_mediatique_tv_generique(
                 data_filtered_high_audience, hour_a_day=2
             )
             st.plotly_chart(fig_clsmt_tv_g, use_container_width=True)
-            all_figs.append(fig_clsmt_tv_g)
+            all_figs.append(add_tab2_filtering_to_fig_title(fig_clsmt_tv_g))
             fig_clsmt_radio = mt_bilan.plot_classement_volume_mediatique_radio(
                 data_filtered_high_audience, hour_a_day=4
             )
             st.plotly_chart(fig_clsmt_radio, use_container_width=True)
-            all_figs.append(fig_clsmt_radio)
+            all_figs.append(add_tab2_filtering_to_fig_title(fig_clsmt_radio))
 
         with st.expander("Evolutions au cours du temps", expanded=False):
             st.markdown("## Volumes médiatiques")
@@ -217,14 +225,14 @@ if data is not None:
                     title="Evolution du volume médiatique top TV %s" % keyword,
                 )
                 st.plotly_chart(fig_time_volume_tv)
-                all_figs.append(fig_time_volume_tv)
+                all_figs.append(add_tab2_filtering_to_fig_title(fig_time_volume_tv))
                 fig_time_volume_radio = mt_bilan.media_volume_over_time(
                     data_filtered_kw_radio,
                     hour_a_day=4,
                     title="Evolution du volume médiatique top Radio %s" % keyword,
                 )
                 st.plotly_chart(fig_time_volume_radio)
-                all_figs.append(fig_time_volume_radio)
+                all_figs.append(add_tab2_filtering_to_fig_title(fig_time_volume_radio))
 
 
     # export the figures
@@ -241,7 +249,6 @@ if data is not None:
             data=html_string,
             key="download_button",
             help="Clique pour télécharger le contenu de cette page.",
-            mine='application/octet-stream'
         )
 
 
