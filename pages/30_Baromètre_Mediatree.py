@@ -64,7 +64,7 @@ def load_data(uploaded_files):
 
 def add_tab2_filtering_to_fig_title(fig):
     current_title = fig_volume.layout.title.text
-    updated_title = current_title + 'filtré de 6h à 10h radio et 19h à 21h TV'
+    updated_title = current_title + ' filtré de 6h à 10h radio et 19h à 21h TV'
     fig.update_layout(title_text=updated_title)
     return fig
 
